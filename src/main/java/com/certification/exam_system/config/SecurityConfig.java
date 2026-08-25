@@ -44,7 +44,9 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
 
                         .requestMatchers("/api/test/admin")
                         .hasRole("ADMIN")
@@ -55,10 +57,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/test/candidate")
                         .hasRole("CANDIDATE")
 
+                        .requestMatchers("/api/candidates/*/documents/**")
+                        .hasAnyRole("ADMIN", "CANDIDATE")
+
                         .requestMatchers("/api/candidates/**")
                         .hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
+                        .anyRequest()
+                        .authenticated()
                 )
 
                 .addFilterBefore(
