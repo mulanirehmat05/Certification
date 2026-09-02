@@ -75,6 +75,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/exam-assignments/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers("/api/questions/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/exam-session-questions/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/exam-attempts/**")
+                        .hasRole("CANDIDATE")
+
                         .anyRequest()
                         .authenticated()
                 )
