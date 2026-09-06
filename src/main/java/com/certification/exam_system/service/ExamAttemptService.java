@@ -23,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.certification.exam_system.dto.exam.ExamSubmitRequest;
+import com.certification.exam_system.dto.exam.ExamSubmitResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -258,6 +260,57 @@ public class ExamAttemptService {
                 attempt.getStatus(),
                 attempt.getStartedAt(),
                 attempt.getSubmittedAt()
+        );
+    }
+
+    @Transactional
+    public ExamSubmitResponse submitExam(
+            ExamSubmitRequest request
+    ) {
+
+        Candidate candidate = getAuthenticatedCandidate();
+
+        ExamAttempt examAttempt =
+                examAttemptRepository
+                        .findById(request.getAttemptId())
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Exam attempt not found"
+                                )
+                        );
+
+        if (!examAttempt.getCandidate().getId()
+                .equals(candidate.getId())) {
+
+            throw new IllegalArgumentException(
+                    "You are not allowed to submit this exam attempt"
+            );
+        }
+
+        if (examAttempt.getStatus()
+                != ExamAttemptStatus.IN_PROGRESS) {
+
+            throw new IllegalArgumentException(
+                    "Exam attempt is not in progress"
+            );
+        }
+
+        examAttempt.setStatus(
+                ExamAttemptStatus.SUBMITTED
+        );
+
+        examAttempt.setSubmittedAt(
+                LocalDateTime.now()
+        );
+
+        ExamAttempt submittedAttempt =
+                examAttemptRepository.save(examAttempt);
+
+        return new ExamSubmitResponse(
+                submittedAttempt.getId(),
+                submittedAttempt.getStatus(),
+                submittedAttempt.getSubmittedAt(),
+                "Exam submitted successfully"
         );
     }
 }
