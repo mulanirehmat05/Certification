@@ -23,6 +23,10 @@ public interface ExamAnswerRepository
             Long examAttemptId
     );
 
+    List<ExamAnswer> findByExamAttemptIdOrderByQuestionIdAsc(
+            Long examAttemptId
+    );
+
     long countByExamAttemptId(
             Long examAttemptId
     );

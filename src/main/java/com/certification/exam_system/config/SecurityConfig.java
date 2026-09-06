@@ -98,6 +98,21 @@ public class SecurityConfig {
                         .requestMatchers("/api/certificates/**")
                         .hasAnyRole("ADMIN", "CANDIDATE")
 
+                        .requestMatchers("/api/examiners/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/examiner-assignments/my-sessions")
+                        .hasRole("EXAMINER")
+
+                        .requestMatchers("/api/examiner-attempts/**")
+                        .hasRole("EXAMINER")
+
+                        .requestMatchers("/api/examiner-answers/**")
+                        .hasRole("EXAMINER")
+
+                        .requestMatchers("/api/examiner-results/**")
+                        .hasRole("EXAMINER")
+
                         .anyRequest()
                         .authenticated()
                 )

@@ -25,11 +25,20 @@ public interface ExamAttemptRepository
             Long candidateId
     );
 
+    List<ExamAttempt> findByExamSessionIdOrderByStartedAtAsc(
+            Long examSessionId
+    );
+
     List<ExamAttempt> findByExamSessionId(
             Long examSessionId
     );
 
     List<ExamAttempt> findByStatus(
+            ExamAttemptStatus status
+    );
+
+    long countByExamSessionIdAndStatus(
+            Long examSessionId,
             ExamAttemptStatus status
     );
 }
