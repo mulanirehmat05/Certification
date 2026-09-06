@@ -366,19 +366,41 @@ public class ExamSessionService {
             ExamSessionRequest request
     ) {
 
-        if (request.getExamDate()
-                .isBefore(LocalDate.now())) {
+        LocalDate examDate = request.getExamDate();
+        LocalTime startTime = request.getStartTime();
+        LocalTime endTime = request.getEndTime();
 
+        if (examDate == null) {
+            throw new IllegalArgumentException(
+                    "Exam date is required"
+            );
+        }
+
+        if (startTime == null || endTime == null) {
+            throw new IllegalArgumentException(
+                    "Exam start time and end time are required"
+            );
+        }
+
+        if (examDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException(
                     "Exam date cannot be in the past"
             );
         }
 
-        if (!request.getStartTime()
-                .isBefore(request.getEndTime())) {
-
+        if (!startTime.isBefore(endTime)) {
             throw new IllegalArgumentException(
                     "Exam start time must be before end time"
+            );
+        }
+
+        // If exam is scheduled for today,
+        // the start time must not be in the past.
+        if (examDate.equals(LocalDate.now())
+                && !startTime.isAfter(LocalTime.now())) {
+
+            throw new IllegalArgumentException(
+                    "Exam start time cannot be in the past"
             );
         }
 
@@ -387,13 +409,20 @@ public class ExamSessionService {
                 .equals("OFFLINE")) {
 
             if (request.getExamCenter() == null
-                    || request.getExamCenter()
-                    .isBlank()) {
+                    || request.getExamCenter().isBlank()) {
 
                 throw new IllegalArgumentException(
                         "Exam center is required for offline exams"
                 );
             }
+        }
+
+        if (request.getMaximumCandidates() == null
+                || request.getMaximumCandidates() <= 0) {
+
+            throw new IllegalArgumentException(
+                    "Maximum candidates must be greater than 0"
+            );
         }
     }
 
